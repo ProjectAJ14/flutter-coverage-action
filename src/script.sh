@@ -135,7 +135,7 @@ validate_repository_format() {
 
     if ! [[ "$repository" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]]; then
         log_error "Invalid repository format. Expected: owner/repo"
-        exit 1
+        usage "$repository" "$pr_number" "$github_token" "$MAX_REPORTS" "$DEBUG"
     fi
 }
 
@@ -144,7 +144,7 @@ validate_pr_number() {
 
     if ! [[ "$pr_number" =~ ^[0-9]+$ ]] || [ "$pr_number" -lt 1 ]; then
         log_error "PR number must be a positive integer"
-        exit 1
+        usage "$repository" "$pr_number" "$github_token" "$MAX_REPORTS" "$DEBUG"
     fi
 }
 
@@ -153,14 +153,14 @@ validate_max_reports() {
 
     if ! [[ "$max_reports" =~ ^[0-9]+$ ]] || [ "$max_reports" -lt 1 ]; then
         log_error "max_reports must be a positive integer"
-        exit 1
+        usage "$repository" "$pr_number" "$github_token" "$MAX_REPORTS" "$DEBUG"
     fi
 }
 
 validate_source_coverage_dir() {
     if [[ ! -d "$SOURCE_COV_DIR" ]]; then
         log_error "Source coverage directory not found: ${SOURCE_COV_DIR}"
-        exit 1
+        usage "$repository" "$pr_number" "$github_token" "$MAX_REPORTS" "$DEBUG"
     fi
 }
 
@@ -169,6 +169,7 @@ validate_github_token() {
 
     if [[ ${#github_token} -lt 30 ]]; then
         log_warning "GitHub token appears to be too short"
+        usage "$repository" "$pr_number" "$github_token" "$MAX_REPORTS" "$DEBUG"
     fi
 }
 
