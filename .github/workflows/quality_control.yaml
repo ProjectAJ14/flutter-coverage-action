@@ -23,6 +23,10 @@ jobs:
 
   action_adventure:  # 🎮 Testing our action
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      pages: write
     steps:
       - name: 📦 Clone the Goodies
         uses: actions/checkout@v4
