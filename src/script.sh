@@ -345,6 +345,9 @@ main() {
     echo "# Coverage Reports" > "${COVERAGE_BASE_DIR}/${README_FILE}"
     }
 
+    pwd
+    ls
+    ensure_directories "${TEMP_DIR}"
     cd "${TEMP_DIR}"
 
     # Create coverage directory for this PR
