@@ -339,9 +339,7 @@ main() {
     log_tree
     # Copy coverage report
     log_info "Copying coverage report..."
-    ls -lah "../${COVERAGE_BASE_DIR}/html"
-    cp -r "../${COVERAGE_BASE_DIR}/html/*" "${PR_COVERAGE_DIR}/"
-
+    cp -r "../${COVERAGE_BASE_DIR}/html/"* "${PR_COVERAGE_DIR}/"
     log_tree
     # Cleanup old reports
     cleanup_old_reports
