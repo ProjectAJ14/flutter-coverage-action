@@ -91,8 +91,6 @@ validate_parameters() {
     validate_repository_format "$repository"
     validate_pr_number "$pr_number"
     validate_max_reports "$max_reports"
-    validate_source_coverage_dir
-    validate_github_token "$github_token"
 }
 
 validate_required_params() {
@@ -139,21 +137,6 @@ validate_max_reports() {
     if ! [[ "$max_reports" =~ ^[0-9]+$ ]] || [ "$max_reports" -lt 1 ]; then
         log_error "max_reports must be a positive integer: $max_reports"
         exit 1
-    fi
-}
-
-validate_source_coverage_dir() {
-    if [[ ! -d "$SOURCE_COV_DIR" ]]; then
-        log_error "Source coverage directory not found: ${SOURCE_COV_DIR}"
-        exit 1
-    fi
-}
-
-validate_github_token() {
-    local github_token=$1
-
-    if [[ ${#github_token} -lt 30 ]]; then
-        log_warning "GitHub token appears to be too short"
     fi
 }
 
