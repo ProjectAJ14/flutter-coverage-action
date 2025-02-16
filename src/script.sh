@@ -16,9 +16,6 @@ readonly COVERAGE_DIR="coverage"
 readonly TEMP_DIR="gh-pages"
 readonly README_FILE="README.md"
 
-# Template paths
-readonly PR_PATH_PATTERN="${COVERAGE_DIR}/pr-*"
-
 # Usage information
 usage() {
     echo -e "${BLUE}Usage: ./script.sh <repository> <pr_number> <github_token> [max_reports] [debug]${NC}"
@@ -234,7 +231,7 @@ generate_coverage_index() {
 EOL
 
     # Add summary section
-    current_reports=$(find "${PR_PATH_PATTERN}" -maxdepth 0 -type d 2>/dev/null | wc -l)
+    current_reports=$(find coverage/pr-* -maxdepth 0 -type d 2>/dev/null | wc -l)
     {
         echo '<div class="summary">'
         echo "<p>Active PR reports: ${current_reports} / ${MAX_REPORTS}</p>"
@@ -269,7 +266,7 @@ EOL
     echo "<tr><td class=\"timestamp\" data-utc=\"${DEPLOY_TIME}\"></td><td><a href=\"pr-${PR_NUMBER}/\">PR #${PR_NUMBER}</a><span class=\"latest-badge\">Latest</span></td></tr>" >> "$output_file"
 
     # Add previous PR entries
-    for pr_dir in ${PR_PATH_PATTERN}; do
+    for pr_dir in coverage/pr-*/; do
         if [ -d "$pr_dir" ] && [ "$pr_dir" != "${PR_COVERAGE_DIR}" ]; then
             pr_num=$(basename "$pr_dir" | sed 's/pr-//')
             if [ "$pr_num" != "index.html" ] && [ "$pr_num" != "README.md" ]; then
@@ -285,10 +282,10 @@ EOL
 # Function to cleanup old reports
 cleanup_old_reports() {
     local total_reports
-    total_reports=$(find "${PR_PATH_PATTERN}" -maxdepth 0 -type d | wc -l) || return
+    total_reports=$(find coverage/pr-* -maxdepth 0 -type d | wc -l) || return
     if [ "$total_reports" -gt "$MAX_REPORTS" ]; then
         log_info "Cleaning up old reports to maintain limit of $MAX_REPORTS reports..."
-        find "${PR_PATH_PATTERN}" -maxdepth 0 -type d | sort -V | head -n -"$MAX_REPORTS" | xargs rm -rf
+        find coverage/pr-* -maxdepth 0 -type d | sort -V | head -n -"$MAX_REPORTS" | xargs rm -rf
     fi
 }
 
