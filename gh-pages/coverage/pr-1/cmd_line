@@ -1,0 +1,1 @@
+genhtml coverage/lcov.info -o coverage/html --keep-going --missed --show-proportion --show-navigation --show-details --hierarchical --title Coverage --header-title 'Coverage Report For PR#1'
