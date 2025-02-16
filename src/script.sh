@@ -292,6 +292,13 @@ cleanup_old_reports() {
     fi
 }
 
+log_tree() {
+    log_debug "Current Tree: $(pwd)"
+    if [[ "${DEBUG}" -eq 1 ]]; then
+        tree /
+    fi
+}
+
 # Main script execution
 main() {
     set -e  # Exit on any error
@@ -323,26 +330,22 @@ main() {
     }
 
     ensure_directories "${TEMP_DIR}"
-    log_debug "Current Tree: $(pwd)"
-    tree
+    log_tree
     cd "${TEMP_DIR}"
     # Create coverage directory for this PR
     log_info "Creating coverage directory for PR #${PR_NUMBER}..."
     ensure_directories "${PR_COVERAGE_DIR}"
 
-    log_debug "Current Tree: $(pwd)"
-    tree
+    log_tree
     # Copy coverage report
     log_info "Copying coverage report..."
     cp -r "../${COVERAGE_BASE_DIR}/html/*" "${PR_COVERAGE_DIR}/"
 
-    log_debug "Current Tree: $(pwd)"
-    tree
+    log_tree
     # Cleanup old reports
     cleanup_old_reports
 
-    log_debug "Current Tree: $(pwd)"
-    tree
+    log_tree
     # Generate coverage index
     log_info "Generating coverage index..."
     generate_coverage_index
