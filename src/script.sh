@@ -59,7 +59,7 @@ initialize_paths() {
     COVERAGE_BASE_DIR=${COVERAGE_BASE_DIR:-$COVERAGE_DIR}
 
     # Update source coverage dir to use COVERAGE_BASE_DIR
-    SOURCE_COV_DIR="${COVERAGE_BASE_DIR}/html"
+    SOURCE_COV_DIR="../${COVERAGE_DIR}/html"
 
     # Create PR-specific paths
     PR_COVERAGE_DIR="${COVERAGE_DIR}/pr-${PR_NUMBER}"
@@ -334,7 +334,8 @@ main() {
     initialize_paths
     # Validate parameters
     validate_parameters "$REPOSITORY" "$PR_NUMBER" "$GITHUB_TOKEN" "$MAX_REPORTS"
-
+    log_debug "Current Tree: $(pwd)"
+    tree
     # Clone gh-pages branch
     git clone --single-branch --branch gh-pages "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPOSITORY}.git" "${TEMP_DIR}" || {
     # If branch doesn't exist, create it
