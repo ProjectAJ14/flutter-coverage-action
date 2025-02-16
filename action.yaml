@@ -28,32 +28,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Validate Inputs
-      shell: bash
-      run: |
-        # Input validation
-        echo "🔍 Validating inputs..."
-        
-        # Validate coverage_base_dir
-        if [[ ! -d "${{ inputs.coverage_base_dir }}/coverage" ]]; then
-          echo "❌ Error: Coverage base directory '${{ inputs.coverage_base_dir }}/coverage' does not exist!"
-          exit 1
-        fi
-        
-        # Validate max_reports is a positive number
-        if ! [[ "${{ inputs.max_reports }}" =~ ^[1-9][0-9]*$ ]]; then
-          echo "❌ Error: max_reports must be a positive number!"
-          exit 1
-        fi
-        
-        # Validate debug_mode is 0 or 1
-        if [[ "${{ inputs.debug_mode }}" != "0" && "${{ inputs.debug_mode }}" != "1" ]]; then
-          echo "❌ Error: debug_mode must be either 0 or 1!"
-          exit 1
-        fi
-        
-        echo "✅ Input validation successful!"
-
     - name: Setup Windows Dependencies
       if: runner.os == 'Windows'
       shell: bash
@@ -95,8 +69,8 @@ runs:
         
         # Generate HTML report
         cd "${{ inputs.coverage_base_dir }}"
-        genhtml "${{ inputs.coverage_base_dir }}/coverage/lcov.info" \
-        -o "${{ inputs.coverage_base_dir }}/coverage/html" \
+        genhtml "coverage/lcov.info" \
+        -o "coverage/html" \
         --keep-going --missed --show-proportion \
         --show-navigation --show-details --hierarchical \
         --title "Coverage" \
