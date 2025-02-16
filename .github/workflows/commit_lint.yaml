@@ -1,0 +1,17 @@
+name: 🔍 Commit Message Style Police
+on: [pull_request]
+
+permissions:
+  contents: read       # 📚 Need to read the repo
+  pull-requests: read  # 👀 Gotta check those PRs
+
+jobs:
+  message_detective:   # 🕵️ Time to investigate those commits!
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚀 Beam down the code
+        uses: actions/checkout@v4
+
+      - name: ✨ Check if commits are fabulous
+        uses: wagoid/commitlint-github-action@v6
+        # 🎭 Making sure your commits tell a beautiful story!

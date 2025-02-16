@@ -1,0 +1,42 @@
+name: 🎁 Version Party Time!
+
+on:
+  workflow_dispatch:  # 🎯 Manual trigger for maximum control!
+
+jobs:
+  release-the-kraken:  # 🐙 Time to unleash a new version!
+    name: 🚀 Release Magic
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write      # ✍️ Let us write new stuff
+      issues: write        # 🎫 Update those tickets
+      pull-requests: write # 🔄 PR powers activated!
+
+    steps:
+      - name: 📦 Grab the Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # 🌳 Need the full history!
+          persist-credentials: false
+
+      - name: 🛠️ Setup Node.js Magic
+        uses: actions/setup-node@v4.2.0
+
+      - name: 🎭 Prep for Preview Release
+        if: github.ref != 'refs/heads/main'
+        run: mv .releaserc.prerelease.yaml .releaserc.yaml
+        # 🎪 Special config for non-main branches!
+
+      - name: 🎈 Release Time!
+        uses: cycjimmy/semantic-release-action@v4.1.1
+        id: semantic  # 🏷️ We'll need this ID later
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🎉 Celebrate New Release
+        if: steps.semantic.outputs.new_release_published == 'true'
+        run: |
+          echo "🌟 New Version: ${{ steps.semantic.outputs.new_release_version }}"
+          echo "📢 Major: ${{ steps.semantic.outputs.new_release_major_version }}"
+          echo "✨ Minor: ${{ steps.semantic.outputs.new_release_minor_version }}"
+          echo "🔧 Patch: ${{ steps.semantic.outputs.new_release_patch_version }}"

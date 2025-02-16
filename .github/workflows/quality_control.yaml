@@ -1,0 +1,39 @@
+name: 🧪 Quality Control
+
+on:
+  pull_request:      # 🤝 PR checks
+    branches:
+      - main         # 🎯 Target branch
+
+jobs:
+  shell_detective:   # 🔍 Shell script inspection time!
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Fetch the Code
+        uses: actions/checkout@v4
+
+      - name: 🕵️ Shell Script Investigation
+        uses: ludeeus/action-shellcheck@master
+        # 🧐 Making sure our shell scripts are squeaky clean!
+
+  quality_control:  # 🎮 Testing our action
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      pages: write
+    steps:
+      - name: 📦 Clone the Goodies
+        uses: actions/checkout@v4
+
+      - name: 🎯 Run Flutter Coverage Action
+        id: flutter-coverage-action
+        uses: ./
+        with:
+          coverage_base_dir: 'example'
+          max_reports: '100'
+          debug_mode: '1'
+          comment_on_pr: 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
