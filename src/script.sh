@@ -334,7 +334,7 @@ main() {
     tree
     # Copy coverage report
     log_info "Copying coverage report..."
-    cp -r "../${COVERAGE_DIR}/html/*" "${PR_COVERAGE_DIR}/"
+    cp -r "../${COVERAGE_BASE_DIR}/html/*" "${PR_COVERAGE_DIR}/"
 
     log_debug "Current Tree: $(pwd)"
     tree
