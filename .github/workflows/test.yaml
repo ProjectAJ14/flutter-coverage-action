@@ -1,0 +1,35 @@
+name: 🧪 Quality Control Party
+
+on:
+  workflow_dispatch:  # 🎯 Manual trigger
+  push:              # 🚀 Auto-trigger on push
+    branches:
+      - main         # 👑 Main branch
+      - alpha          # 🛠️ Alpha branch
+  pull_request:      # 🤝 PR checks
+    branches:
+      - main         # 🎯 Target branch
+
+jobs:
+  shell_detective:   # 🔍 Shell script inspection time!
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Fetch the Code
+        uses: actions/checkout@v4
+
+      - name: 🕵️ Shell Script Investigation
+        uses: ludeeus/action-shellcheck@master
+        # 🧐 Making sure our shell scripts are squeaky clean!
+
+  action_adventure:  # 🎮 Testing our action
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📦 Clone the Goodies
+        uses: actions/checkout@v4
+
+      - name: 🎯 Run Flutter Coverage Action
+        id: flutter-coverage-action
+        uses: ./
+        with:
+          use-melos: true    # 🎭 Melos mode activated!
+          debug: true        # 🐛 Debug mode ON for maximum insight!

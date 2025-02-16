@@ -1,0 +1,44 @@
+name: 🎯 Flutter Coverage Magic
+description: |
+  ✨ A magical Github action that keeps an eye on your Flutter coverage! 
+  📊 Analyze your tests, check your coverage, and even deploy beautiful 
+  reports to Github Pages with style! ⭐
+author: 👨‍💻 ProjectAJ14
+
+branding:
+  icon: thumbs-up    # 👍 Because we're awesome!
+  color: blue        # 🌊 Ocean blue vibes
+
+inputs:
+  use-melos:
+    description: 🏰 Enable Melos powers for your mighty mono-repo kingdom!
+    required: false
+    default: 'false'
+  debug:
+    description: 🔍 Turn on the detective mode for super-detailed troubleshooting
+    required: false
+    default: 'false'
+
+runs:
+  using: composite
+  steps:
+    - name: 🪟 Windows Special Setup
+      if: runner.os == 'Windows'
+      shell: bash
+      run: |
+        echo "🔧 Installing yq parser for Windows wizardry..."
+        choco install yq
+
+    - name: 🔐 Grant Script Powers
+      shell: bash
+      run: chmod +x "$GITHUB_ACTION_PATH/src/script.sh"
+      # 🎭 Making our script executable and ready for action!
+
+    - name: 🚀 Launch Coverage Mission
+      id: flutter-coverage-action
+      shell: bash
+      run: |
+        $GITHUB_ACTION_PATH/src/script.sh \
+          -f '${{ inputs.use-melos }}' \
+          ${{ inputs.debug == 'true' && '-p' || '' }}
+      # 🎪 Let the coverage analysis begin!
