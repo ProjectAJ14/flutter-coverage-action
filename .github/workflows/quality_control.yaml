@@ -26,7 +26,7 @@ jobs:
       - name: 📦 Clone the Goodies
         uses: actions/checkout@v4
 
-      - name: 🎯 Run Flutter Coverage Action
+      - name: 📊 Reports Coverage to Github Pages
         id: flutter-coverage-action
         uses: ./
         with:
