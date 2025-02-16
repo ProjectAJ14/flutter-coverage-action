@@ -117,6 +117,15 @@ validate_required_params() {
 
     if [[ -z "$repository" || -z "$pr_number" || -z "$github_token" ]]; then
         log_error "Missing required parameters"
+        if [[ -z "$repository" ]]; then
+            log_error "Repository is required"
+        fi
+        if [[ -z "$pr_number" ]]; then
+            log_error "PR number is required"
+        fi
+        if [[ -z "$github_token" ]]; then
+            log_error "GitHub token is required"
+        fi
         usage "$repository" "$pr_number" "$github_token" "$MAX_REPORTS" "$DEBUG"
     fi
 }
