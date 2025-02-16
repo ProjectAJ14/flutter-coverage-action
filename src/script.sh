@@ -38,14 +38,6 @@ usage() {
     echo
     echo "Environment variables:"
     echo "  COVERAGE_BASE_DIR - Base directory for coverage reports (default: coverage)"
-    echo
-    echo "Current values:"
-    echo "  repository: ${repository:-not set}"
-    echo "  pr_number: ${pr_number:-not set}"
-    echo "  github_token: ${github_token:+********}"
-    echo "  max_reports: ${max_reports}"
-    echo "  debug: ${debug}"
-    echo "  COVERAGE_BASE_DIR: ${COVERAGE_BASE_DIR:-$COVERAGE_DIR}"
     exit 1
 }
 
@@ -83,6 +75,12 @@ initialize_paths() {
     log_debug "- Base coverage dir: ${COVERAGE_BASE_DIR}"
     log_debug "- Source coverage dir: ${SOURCE_COV_DIR}"
     log_debug "- PR coverage dir: ${PR_COVERAGE_DIR}"
+    log_debug "Current values:"
+    log_debug "  repository: ${repository:-not set}"
+    log_debug "  pr_number: ${pr_number:-not set}"
+    log_debug "  max_reports: ${max_reports}"
+    log_debug "  debug: ${debug}"
+    log_debug "  COVERAGE_BASE_DIR: ${COVERAGE_BASE_DIR:-$COVERAGE_DIR}"
 }
 
 ensure_directories() {
@@ -126,7 +124,7 @@ validate_required_params() {
         if [[ -z "$github_token" ]]; then
             log_error "GitHub token is required"
         fi
-        usage "$repository" "$pr_number" "$github_token" "$MAX_REPORTS" "$DEBUG"
+        usage "$repository" "$pr_number" "$github_token"
     fi
 }
 
@@ -134,8 +132,8 @@ validate_repository_format() {
     local repository=$1
 
     if ! [[ "$repository" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]]; then
-        log_error "Invalid repository format. Expected: owner/repo"
-        usage "$repository" "$pr_number" "$github_token" "$MAX_REPORTS" "$DEBUG"
+        log_error "Invalid repository format: $repository"
+        exit 1
     fi
 }
 
@@ -143,8 +141,8 @@ validate_pr_number() {
     local pr_number=$1
 
     if ! [[ "$pr_number" =~ ^[0-9]+$ ]] || [ "$pr_number" -lt 1 ]; then
-        log_error "PR number must be a positive integer"
-        usage "$repository" "$pr_number" "$github_token" "$MAX_REPORTS" "$DEBUG"
+        log_error "PR number must be a positive integer: $pr_number"
+        exit 1
     fi
 }
 
@@ -152,15 +150,15 @@ validate_max_reports() {
     local max_reports=$1
 
     if ! [[ "$max_reports" =~ ^[0-9]+$ ]] || [ "$max_reports" -lt 1 ]; then
-        log_error "max_reports must be a positive integer"
-        usage "$repository" "$pr_number" "$github_token" "$MAX_REPORTS" "$DEBUG"
+        log_error "max_reports must be a positive integer: $max_reports"
+        exit 1
     fi
 }
 
 validate_source_coverage_dir() {
     if [[ ! -d "$SOURCE_COV_DIR" ]]; then
         log_error "Source coverage directory not found: ${SOURCE_COV_DIR}"
-        usage "$repository" "$pr_number" "$github_token" "$MAX_REPORTS" "$DEBUG"
+        exit 1
     fi
 }
 
@@ -169,7 +167,6 @@ validate_github_token() {
 
     if [[ ${#github_token} -lt 30 ]]; then
         log_warning "GitHub token appears to be too short"
-        usage "$repository" "$pr_number" "$github_token" "$MAX_REPORTS" "$DEBUG"
     fi
 }
 
