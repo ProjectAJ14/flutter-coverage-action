@@ -295,7 +295,7 @@ cleanup_old_reports() {
 log_tree() {
     log_debug "Current Tree: $(pwd)"
     if [[ "${DEBUG}" -eq 1 ]]; then
-        tree /
+        tree ../
     fi
 }
 
