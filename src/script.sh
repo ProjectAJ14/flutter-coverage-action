@@ -22,12 +22,6 @@ readonly PR_PATH_PATTERN="${COVERAGE_DIR}/pr-*"
 
 # Usage information
 usage() {
-    local repository=$1
-    local pr_number=$2
-    local github_token=$3
-    local max_reports=${4:-$DEFAULT_MAX_REPORTS}
-    local debug=${5:-$DEFAULT_DEBUG}
-
     echo -e "${BLUE}Usage: ./script.sh <repository> <pr_number> <github_token> [max_reports] [debug]${NC}"
     echo "Parameters:"
     echo "  repository   - GitHub repository (owner/repo)"
@@ -75,12 +69,6 @@ initialize_paths() {
     log_debug "- Base coverage dir: ${COVERAGE_BASE_DIR}"
     log_debug "- Source coverage dir: ${SOURCE_COV_DIR}"
     log_debug "- PR coverage dir: ${PR_COVERAGE_DIR}"
-    log_debug "Current values:"
-    log_debug "  repository: ${repository:-not set}"
-    log_debug "  pr_number: ${pr_number:-not set}"
-    log_debug "  max_reports: ${max_reports}"
-    log_debug "  debug: ${debug}"
-    log_debug "  COVERAGE_BASE_DIR: ${COVERAGE_BASE_DIR:-$COVERAGE_DIR}"
 }
 
 ensure_directories() {
@@ -124,7 +112,7 @@ validate_required_params() {
         if [[ -z "$github_token" ]]; then
             log_error "GitHub token is required"
         fi
-        usage "$repository" "$pr_number" "$github_token"
+        usage
     fi
 }
 
@@ -338,15 +326,15 @@ main() {
     MAX_REPORTS=${4:-$DEFAULT_MAX_REPORTS}
     DEBUG=${5:-$DEFAULT_DEBUG}
 
-    # Initialize and validate paths
-    initialize_paths
-
-    # Validate parameters
-    validate_parameters "$REPOSITORY" "$PR_NUMBER" "$GITHUB_TOKEN" "$MAX_REPORTS"
-
     log_info "Starting coverage deployment for PR #${PR_NUMBER}"
     log_debug "Repository: ${REPOSITORY}"
     log_debug "Max Reports: ${MAX_REPORTS}"
+    log_debug "Debug: ${DEBUG}"
+
+    # Initialize and validate paths
+    initialize_paths
+    # Validate parameters
+    validate_parameters "$REPOSITORY" "$PR_NUMBER" "$GITHUB_TOKEN" "$MAX_REPORTS"
 
     # Clone gh-pages branch
     log_info "Cloning gh-pages branch..."
