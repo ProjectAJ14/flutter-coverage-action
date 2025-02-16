@@ -1,11 +1,6 @@
 name: 🧪 Quality Control
 
 on:
-  workflow_dispatch:  # 🎯 Manual trigger
-  push:              # 🚀 Auto-trigger on push
-    branches:
-      - main         # 👑 Main branch
-      - alpha          # 🛠️ Alpha branch
   pull_request:      # 🤝 PR checks
     branches:
       - main         # 🎯 Target branch
