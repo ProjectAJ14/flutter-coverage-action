@@ -94,8 +94,7 @@ runs:
         mkdir -p "${{ inputs.coverage_base_dir }}/coverage/html"
         
         # Generate HTML report
-        pwd
-        ls
+        cd "${{ inputs.coverage_base_dir }}"
         genhtml "${{ inputs.coverage_base_dir }}/coverage/lcov.info" \
         -o "${{ inputs.coverage_base_dir }}/coverage/html" \
         --keep-going --missed --show-proportion \
