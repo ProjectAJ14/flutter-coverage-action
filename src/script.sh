@@ -62,7 +62,7 @@ initialize_paths() {
     SOURCE_COV_DIR="${COVERAGE_BASE_DIR}/html"
 
     # Create PR-specific paths
-    PR_COVERAGE_DIR="${COVERAGE_PATH}/pr-${PR_NUMBER}"
+    PR_COVERAGE_DIR="${COVERAGE_DIR}/pr-${PR_NUMBER}"
 
     log_debug "Using paths:"
     log_debug "- Base coverage dir: ${COVERAGE_BASE_DIR}"
