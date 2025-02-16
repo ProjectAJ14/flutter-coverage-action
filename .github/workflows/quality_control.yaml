@@ -1,4 +1,4 @@
-name: 🧪 Quality Control Party
+name: 🧪 Quality Control
 
 on:
   workflow_dispatch:  # 🎯 Manual trigger
