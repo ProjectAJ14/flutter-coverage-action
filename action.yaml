@@ -10,7 +10,7 @@ inputs:
   coverage_base_dir:
     description: Base directory for coverage reports 📁
     required: false
-    default: 'coverage'
+    default: '.'
   max_reports:
     description: Maximum number of reports to retain 🔢
     required: false
@@ -94,6 +94,8 @@ runs:
         mkdir -p "${{ inputs.coverage_base_dir }}/coverage/html"
         
         # Generate HTML report
+        pwd
+        ls
         genhtml "${{ inputs.coverage_base_dir }}/coverage/lcov.info" \
         -o "${{ inputs.coverage_base_dir }}/coverage/html" \
         --keep-going --missed --show-proportion \
