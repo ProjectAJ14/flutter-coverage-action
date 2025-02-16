@@ -1,44 +1,192 @@
-name: 🎯 Flutter Coverage Magic
-description: |
-  ✨ A magical Github action that keeps an eye on your Flutter coverage! 
-  📊 Analyze your tests, check your coverage, and even deploy beautiful 
-  reports to Github Pages with style! ⭐
-author: 👨‍💻 ProjectAJ14
+name: Flutter Coverage Action 🎯
+description: A GitHub Action to generate and deploy coverage reports to GitHub Pages with style! ✨
+author: ProjectAJ14
 
 branding:
   icon: thumbs-up    # 👍 Because we're awesome!
   color: blue        # 🌊 Ocean blue vibes
 
 inputs:
-  use-melos:
-    description: 🏰 Enable Melos powers for your mighty mono-repo kingdom!
+  coverage_base_dir:
+    description: Base directory for coverage reports 📁
     required: false
-    default: 'false'
-  debug:
-    description: 🔍 Turn on the detective mode for super-detailed troubleshooting
+    default: 'coverage'
+  max_reports:
+    description: Maximum number of reports to retain 🔢
     required: false
-    default: 'false'
+    default: '50'
+  debug_mode:
+    description: Enable verbose logging for troubleshooting 🔍
+    required: false
+    default: '0'
+  comment_on_pr:
+    description: Whether to add a comment on the PR with the coverage report link 💬
+    required: false
+    default: 'true'
+
 
 runs:
   using: composite
   steps:
-    - name: 🪟 Windows Special Setup
+    - name: Validate Inputs
+      shell: bash
+      run: |
+        # Input validation
+        echo "🔍 Validating inputs..."
+        
+        # Validate coverage_base_dir
+        if [[ ! -d "${{ inputs.coverage_base_dir }}" ]]; then
+          echo "❌ Error: Coverage base directory '${{ inputs.coverage_base_dir }}' does not exist!"
+          exit 1
+        fi
+        
+        # Validate max_reports is a positive number
+        if ! [[ "${{ inputs.max_reports }}" =~ ^[1-9][0-9]*$ ]]; then
+          echo "❌ Error: max_reports must be a positive number!"
+          exit 1
+        fi
+        
+        # Validate debug_mode is 0 or 1
+        if [[ "${{ inputs.debug_mode }}" != "0" && "${{ inputs.debug_mode }}" != "1" ]]; then
+          echo "❌ Error: debug_mode must be either 0 or 1!"
+          exit 1
+        fi
+        
+        echo "✅ Input validation successful!"
+
+    - name: Setup Windows Dependencies
       if: runner.os == 'Windows'
       shell: bash
       run: |
-        echo "🔧 Installing yq parser for Windows wizardry..."
-        choco install yq
+        echo "🔧 Installing required Windows dependencies..."
+        if ! command -v yq &> /dev/null; then
+          choco install yq
+          if [ $? -ne 0 ]; then
+            echo "❌ Failed to install yq!"
+            exit 1
+          fi
+        fi
+        echo "✅ Windows dependencies installed successfully!"
 
-    - name: 🔐 Grant Script Powers
-      shell: bash
-      run: chmod +x "$GITHUB_ACTION_PATH/src/script.sh"
-      # 🎭 Making our script executable and ready for action!
-
-    - name: 🚀 Launch Coverage Mission
-      id: flutter-coverage-action
+    - name: Generate Coverage from lcov
+      id: generate-coverage
       shell: bash
       run: |
+        echo "📊 Generating coverage report..."
+        
+        # Check if lcov is installed
+        if ! command -v lcov &> /dev/null; then
+        echo "📦 Installing lcov..."
+        sudo apt-get update && sudo apt-get install -y lcov=2.0-4ubuntu2
+        if [ $? -ne 0 ]; then
+        echo "❌ Failed to install lcov!"
+        exit 1
+        fi
+        fi
+        
+        # Validate lcov.info exists
+        if [[ ! -f "${{ inputs.coverage_base_dir }}/lcov.info" ]]; then
+        echo "❌ Error: ${{ inputs.coverage_base_dir }}/lcov.info not found!"
+        exit 1
+        fi
+        
+        # Create html directory if it doesn't exist
+        mkdir -p "${{ inputs.coverage_base_dir }}/html"
+        
+        # Generate HTML report
+        genhtml "${{ inputs.coverage_base_dir }}/lcov.info" \
+        -o "${{ inputs.coverage_base_dir }}/html" \
+        --keep-going --missed --show-proportion \
+        --show-navigation --show-details --hierarchical \
+        --title "Coverage" \
+        --header-title "Coverage Report For PR#${{ github.event.pull_request.number }}"
+        
+        if [ $? -ne 0 ]; then
+        echo "❌ Failed to generate coverage report!"
+        exit 1
+        fi
+        
+        echo "✅ Coverage report generated successfully!"
+
+    - name: Configure Git
+      shell: bash
+      run: |
+        echo "🔧 Configuring Git..."
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        echo "✅ Git configured successfully!"
+
+    - name: Prepare Deploy Script
+      shell: bash
+      run: |
+        echo "📝 Preparing deploy script..."
+        if [[ ! -f "$GITHUB_ACTION_PATH/src/script.sh" ]]; then
+          echo "❌ Error: Deploy script not found!"
+          exit 1
+        fi
+        chmod +x "$GITHUB_ACTION_PATH/src/script.sh"
+        echo "✅ Deploy script prepared successfully!"
+
+    - name: Generate and Deploy Coverage
+      id: coverage-deploy
+      shell: bash
+      env:
+        COVERAGE_BASE_DIR: ${{ inputs.coverage_base_dir }}
+      run: |
+        echo "🚀 Deploying coverage report..."
+        
+        # Debug mode logging
+        if [[ "${{ inputs.debug_mode }}" == "1" ]]; then
+          set -x
+        fi
+        
         $GITHUB_ACTION_PATH/src/script.sh \
-          -f '${{ inputs.use-melos }}' \
-          ${{ inputs.debug == 'true' && '-p' || '' }}
-      # 🎪 Let the coverage analysis begin!
+          "${{ github.repository }}" \
+          "${{ github.event.pull_request.number }}" \
+          "${{ secrets.GITHUB_TOKEN }}" \
+          "${{ inputs.max_reports }}" \
+          "${{ inputs.debug_mode }}"
+        
+        if [ $? -ne 0 ]; then
+          echo "❌ Failed to deploy coverage report!"
+          exit 1
+        fi
+        
+        # Export URLs for use in the comment step
+        echo "coverage_url=https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/coverage/pr-${{ github.event.pull_request.number }}/" >> $GITHUB_OUTPUT
+        echo "index_url=https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/coverage/" >> $GITHUB_OUTPUT
+        
+        echo "✅ Coverage report deployed successfully!"
+
+    - name: Add Coverage Report Comment
+      if: inputs.comment_on_pr == 'true'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const commentBody = `## 📊 Coverage Report Summary
+          
+          Hey there! 👋 Your coverage report is ready!
+          
+          ### 🔗 Quick Links
+          
+          - [View Coverage Report for PR #${context.payload.pull_request.number}](${process.env.COVERAGE_URL})
+          - [View All Coverage Reports](${process.env.INDEX_URL})
+          
+          > 🤖 This report was automatically generated by the Flutter Coverage Action.
+          > 
+          > 💡 If you find this helpful, consider giving the action a ⭐!`;
+          
+          try {
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: context.issue.number,
+              body: commentBody
+            });
+            console.log('✅ Comment added successfully!');
+          } catch (error) {
+            console.error('❌ Failed to add comment:', error);
+            throw error;
+          }
+      env:
+        COVERAGE_URL: ${{ steps.coverage-deploy.outputs.coverage_url }}
+        INDEX_URL: ${{ steps.coverage-deploy.outputs.index_url }}

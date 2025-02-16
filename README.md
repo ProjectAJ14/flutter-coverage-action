@@ -1,7 +1,5 @@
 # flutter-coverage-action
-✨ A magical Github action that keeps an eye on your Flutter coverage!
-📊 Analyze your tests, check your coverage, and even deploy beautiful
-reports to Github Pages with style! ⭐
+📊 Reports Coverage to Github Pages with style! ⭐
 
 Originally created by [Ajay Kumar]
 
@@ -17,7 +15,7 @@ steps:
     with:
       flutter-version: 3.19.6
 
-  - name: Generate coverage report
+  - name: 📊 Reports Coverage to Github Pages
     uses: ProjectAJ14/flutter-coverage-action@v1
     with:
       use-melos: false
