@@ -137,7 +137,7 @@ validate_max_reports() {
 
 # Function to generate coverage directory index HTML
 generate_coverage_index() {
-    local output_file="${COVERAGE_BASE_DIR}/index.html"
+    local output_file="${COVERAGE_DIR}/index.html"
     local title="Coverage Reports Directory"
     log_debug "Generating coverage index at: $output_file"
 
