@@ -35,3 +35,6 @@ jobs:
           max_reports: '100'
           debug_mode: '1'
           comment_on_pr: 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        

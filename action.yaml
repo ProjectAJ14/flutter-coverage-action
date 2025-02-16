@@ -143,7 +143,7 @@ runs:
         $GITHUB_ACTION_PATH/src/script.sh \
           "${{ github.repository }}" \
           "${{ github.event.pull_request.number }}" \
-          "${{ secrets.GITHUB_TOKEN }}" \
+          "$GITHUB_TOKEN" \  # Use the environment variable     
           "${{ inputs.max_reports }}" \
           "${{ inputs.debug_mode }}"
         
@@ -157,7 +157,6 @@ runs:
         echo "index_url=https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/coverage/" >> $GITHUB_OUTPUT
         
         echo "✅ Coverage report deployed successfully!"
-
     - name: Add Coverage Report Comment
       if: inputs.comment_on_pr == 'true'
       uses: actions/github-script@v7
