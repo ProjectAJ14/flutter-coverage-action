@@ -327,9 +327,9 @@ main() {
     DEBUG=${5:-$DEFAULT_DEBUG}
 
     log_info "Starting coverage deployment for PR #${PR_NUMBER}"
-    log_debug "Repository: ${REPOSITORY}"
-    log_debug "Max Reports: ${MAX_REPORTS}"
-    log_debug "Debug: ${DEBUG}"
+    log_info "Repository: ${REPOSITORY}"
+    log_info "Max Reports: ${MAX_REPORTS}"
+    log_info "Debug: ${DEBUG}"
 
     # Initialize and validate paths
     initialize_paths

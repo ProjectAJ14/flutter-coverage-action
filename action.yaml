@@ -113,7 +113,7 @@ runs:
         $GITHUB_ACTION_PATH/src/script.sh \
           "${{ github.repository }}" \
           "${{ github.event.pull_request.number }}" \
-          "$GITHUB_TOKEN" \  # Use the environment variable     
+          "$GITHUB_TOKEN" \
           "${{ inputs.max_reports }}" \
           "${{ inputs.debug_mode }}"
         

@@ -16,7 +16,7 @@ jobs:
         uses: ludeeus/action-shellcheck@master
         # 🧐 Making sure our shell scripts are squeaky clean!
 
-  action_adventure:  # 🎮 Testing our action
+  quality_control:  # 🎮 Testing our action
     runs-on: ubuntu-latest
     permissions:
       contents: write
