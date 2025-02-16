@@ -345,22 +345,27 @@ main() {
     echo "# Coverage Reports" > "${COVERAGE_BASE_DIR}/${README_FILE}"
     }
 
-    pwd
-    ls
     ensure_directories "${TEMP_DIR}"
     cd "${TEMP_DIR}"
-
+    log_debug "Current Tree: $(pwd)"
+    tree
     # Create coverage directory for this PR
     log_info "Creating coverage directory for PR #${PR_NUMBER}..."
     ensure_directories "${PR_COVERAGE_DIR}"
 
+    log_debug "Current Tree: $(pwd)"
+    tree
     # Copy coverage report
     log_info "Copying coverage report..."
     cp -r "${SOURCE_COV_DIR}"/* "${PR_COVERAGE_DIR}/"
 
+    log_debug "Current Tree: $(pwd)"
+    tree
     # Cleanup old reports
     cleanup_old_reports
 
+    log_debug "Current Tree: $(pwd)"
+    tree
     # Generate coverage index
     log_info "Generating coverage index..."
     generate_coverage_index
