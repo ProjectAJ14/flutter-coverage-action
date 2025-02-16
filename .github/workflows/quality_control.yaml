@@ -31,7 +31,7 @@ jobs:
         id: flutter-coverage-action
         uses: ./
         with:
-          coverage_base_dir: 'example/coverage'
+          coverage_base_dir: 'example'
           max_reports: '100'
           debug_mode: '1'
           comment_on_pr: 'true'

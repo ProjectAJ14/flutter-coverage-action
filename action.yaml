@@ -35,8 +35,8 @@ runs:
         echo "🔍 Validating inputs..."
         
         # Validate coverage_base_dir
-        if [[ ! -d "${{ inputs.coverage_base_dir }}" ]]; then
-          echo "❌ Error: Coverage base directory '${{ inputs.coverage_base_dir }}' does not exist!"
+        if [[ ! -d "${{ inputs.coverage_base_dir }}/coverage" ]]; then
+          echo "❌ Error: Coverage base directory '${{ inputs.coverage_base_dir }}/coverage' does not exist!"
           exit 1
         fi
         
@@ -85,17 +85,17 @@ runs:
         fi
         
         # Validate lcov.info exists
-        if [[ ! -f "${{ inputs.coverage_base_dir }}/lcov.info" ]]; then
-        echo "❌ Error: ${{ inputs.coverage_base_dir }}/lcov.info not found!"
+        if [[ ! -f "${{ inputs.coverage_base_dir }}/coverage/lcov.info" ]]; then
+        echo "❌ Error: ${{ inputs.coverage_base_dir }}/coverage/lcov.info not found!"
         exit 1
         fi
         
         # Create html directory if it doesn't exist
-        mkdir -p "${{ inputs.coverage_base_dir }}/html"
+        mkdir -p "${{ inputs.coverage_base_dir }}/coverage/html"
         
         # Generate HTML report
-        genhtml "${{ inputs.coverage_base_dir }}/lcov.info" \
-        -o "${{ inputs.coverage_base_dir }}/html" \
+        genhtml "${{ inputs.coverage_base_dir }}/coverage/lcov.info" \
+        -o "${{ inputs.coverage_base_dir }}/coverage/html" \
         --keep-going --missed --show-proportion \
         --show-navigation --show-details --hierarchical \
         --title "Coverage" \
@@ -131,7 +131,7 @@ runs:
       id: coverage-deploy
       shell: bash
       env:
-        COVERAGE_BASE_DIR: ${{ inputs.coverage_base_dir }}
+        COVERAGE_BASE_DIR: "${{ inputs.coverage_base_dir }}/coverage"
       run: |
         echo "🚀 Deploying coverage report..."
         
