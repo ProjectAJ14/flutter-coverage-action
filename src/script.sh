@@ -17,7 +17,6 @@ readonly TEMP_DIR="gh-pages"
 readonly README_FILE="README.md"
 
 # Template paths
-readonly COVERAGE_PATH="${COVERAGE_DIR}/pr-%s"
 readonly PR_PATH_PATTERN="${COVERAGE_DIR}/pr-*"
 
 # Usage information
@@ -63,7 +62,7 @@ initialize_paths() {
     SOURCE_COV_DIR="${COVERAGE_BASE_DIR}/html"
 
     # Create PR-specific paths
-    PR_COVERAGE_DIR=$(printf '%s' "$(printf '%s' "${COVERAGE_PATH}" "${PR_NUMBER}")")
+    PR_COVERAGE_DIR="${COVERAGE_PATH}/pr-${PR_NUMBER}"
 
     log_debug "Using paths:"
     log_debug "- Base coverage dir: ${COVERAGE_BASE_DIR}"
@@ -337,14 +336,14 @@ main() {
     validate_parameters "$REPOSITORY" "$PR_NUMBER" "$GITHUB_TOKEN" "$MAX_REPORTS"
 
     # Clone gh-pages branch
-    log_info "Cloning gh-pages branch..."
-    if ! git clone --single-branch --branch gh-pages "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPOSITORY}.git" "${TEMP_DIR}" 2>/dev/null; then
-        log_warning "gh-pages branch not found, creating new branch..."
-        git checkout --orphan gh-pages
-        git rm -rf .
-        ensure_directories "${COVERAGE_BASE_DIR}"
-        echo "# Coverage Reports" > "${COVERAGE_BASE_DIR}/${README_FILE}"
-    fi
+    git clone --single-branch --branch gh-pages "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPOSITORY}.git" "${TEMP_DIR}" || {
+    # If branch doesn't exist, create it
+    log_warning "gh-pages branch not found, creating new branch..."
+    git checkout --orphan gh-pages
+    git rm -rf .
+    ensure_directories "${COVERAGE_BASE_DIR}"
+    echo "# Coverage Reports" > "${COVERAGE_BASE_DIR}/${README_FILE}"
+    }
 
     cd "${TEMP_DIR}"
 
