@@ -31,5 +31,7 @@ jobs:
         id: flutter-coverage-action
         uses: ./
         with:
-          use-melos: true    # 🎭 Melos mode activated!
-          debug: true        # 🐛 Debug mode ON for maximum insight!
+          coverage_base_dir: 'example/coverage'
+          max_reports: '100'
+          debug_mode: '1'
+          comment_on_pr: 'true'
