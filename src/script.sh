@@ -14,8 +14,6 @@ readonly DEFAULT_DEBUG=0
 # Path configuration
 readonly COVERAGE_DIR="coverage"
 readonly TEMP_DIR="gh-pages"
-# Updated to use COVERAGE_DIR as base
-readonly SOURCE_COVERAGE_DIR="${COVERAGE_DIR}/html"
 readonly README_FILE="README.md"
 
 # Template paths
@@ -65,7 +63,7 @@ initialize_paths() {
     SOURCE_COV_DIR="${COVERAGE_BASE_DIR}/html"
 
     # Create PR-specific paths
-    PR_COVERAGE_DIR=$(printf "${COVERAGE_PATH}" "${PR_NUMBER}")
+    PR_COVERAGE_DIR=$(printf '%s' "$(printf '%s' "${COVERAGE_PATH}" "${PR_NUMBER}")")
 
     log_debug "Using paths:"
     log_debug "- Base coverage dir: ${COVERAGE_BASE_DIR}"
@@ -118,7 +116,7 @@ validate_parameters() {
     if [[ ! -d "$SOURCE_COV_DIR" ]]; then
         log_error "Source coverage directory not found: ${SOURCE_COV_DIR}"
         exit 1
-    }
+    fi
 
     # Validate GitHub token format (basic check)
     if [[ ${#github_token} -lt 30 ]]; then
@@ -226,10 +224,12 @@ EOL
 
     # Add summary section
     current_reports=$(find "${PR_PATH_PATTERN}" -maxdepth 0 -type d 2>/dev/null | wc -l)
-    echo '<div class="summary">' >> "$output_file"
-    echo "<p>Active PR reports: ${current_reports} / ${MAX_REPORTS}</p>" >> "$output_file"
-    echo "<p>Last updated: <span class=\"timestamp\" data-utc=\"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"></span></p>" >> "$output_file"
-    echo '</div>' >> "$output_file"
+    {
+        echo '<div class="summary">'
+        echo "<p>Active PR reports: ${current_reports} / ${MAX_REPORTS}</p>"
+        echo "<p>Last updated: <span class=\"timestamp\" data-utc=\"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"></span></p>"
+        echo '</div>'
+    } >> "$output_file"
 
     generate_table_entries "$output_file"
 
@@ -273,7 +273,8 @@ EOL
 
 # Function to cleanup old reports
 cleanup_old_reports() {
-    local total_reports=$(find "${PR_PATH_PATTERN}" -maxdepth 0 -type d | wc -l)
+    local total_reports
+    total_reports=$(find "${PR_PATH_PATTERN}" -maxdepth 0 -type d | wc -l) || return
     if [ "$total_reports" -gt "$MAX_REPORTS" ]; then
         log_info "Cleaning up old reports to maintain limit of $MAX_REPORTS reports..."
         find "${PR_PATH_PATTERN}" -maxdepth 0 -type d | sort -V | head -n -"$MAX_REPORTS" | xargs rm -rf
