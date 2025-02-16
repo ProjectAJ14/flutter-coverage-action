@@ -22,6 +22,12 @@ readonly PR_PATH_PATTERN="${COVERAGE_DIR}/pr-*"
 
 # Usage information
 usage() {
+    local repository=$1
+    local pr_number=$2
+    local github_token=$3
+    local max_reports=${4:-$DEFAULT_MAX_REPORTS}
+    local debug=${5:-$DEFAULT_DEBUG}
+
     echo -e "${BLUE}Usage: ./script.sh <repository> <pr_number> <github_token> [max_reports] [debug]${NC}"
     echo "Parameters:"
     echo "  repository   - GitHub repository (owner/repo)"
@@ -32,6 +38,14 @@ usage() {
     echo
     echo "Environment variables:"
     echo "  COVERAGE_BASE_DIR - Base directory for coverage reports (default: coverage)"
+    echo
+    echo "Current values:"
+    echo "  repository: ${repository:-not set}"
+    echo "  pr_number: ${pr_number:-not set}"
+    echo "  github_token: ${github_token:+********}"
+    echo "  max_reports: ${max_reports}"
+    echo "  debug: ${debug}"
+    echo "  COVERAGE_BASE_DIR: ${COVERAGE_BASE_DIR:-$COVERAGE_DIR}"
     exit 1
 }
 
@@ -103,7 +117,7 @@ validate_required_params() {
 
     if [[ -z "$repository" || -z "$pr_number" || -z "$github_token" ]]; then
         log_error "Missing required parameters"
-        usage
+        usage "$repository" "$pr_number" "$github_token" "$MAX_REPORTS" "$DEBUG"
     fi
 }
 
