@@ -110,11 +110,6 @@ runs:
       run: |
         echo "🚀 Deploying coverage report..."
         
-        # Debug mode logging
-        if [[ "${{ inputs.debug_mode }}" == "1" ]]; then
-          set -x
-        fi
-        
         $GITHUB_ACTION_PATH/src/script.sh \
           "${{ github.repository }}" \
           "${{ github.event.pull_request.number }}" \

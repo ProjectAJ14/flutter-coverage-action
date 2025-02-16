@@ -88,37 +88,62 @@ validate_parameters() {
     local github_token=$3
     local max_reports=$4
 
-    # Check required parameters
+    validate_required_params "$repository" "$pr_number" "$github_token"
+    validate_repository_format "$repository"
+    validate_pr_number "$pr_number"
+    validate_max_reports "$max_reports"
+    validate_source_coverage_dir
+    validate_github_token "$github_token"
+}
+
+validate_required_params() {
+    local repository=$1
+    local pr_number=$2
+    local github_token=$3
+
     if [[ -z "$repository" || -z "$pr_number" || -z "$github_token" ]]; then
         log_error "Missing required parameters"
         usage
     fi
+}
 
-    # Validate repository format
+validate_repository_format() {
+    local repository=$1
+
     if ! [[ "$repository" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]]; then
         log_error "Invalid repository format. Expected: owner/repo"
         exit 1
     fi
+}
 
-    # Validate PR number is a positive integer
+validate_pr_number() {
+    local pr_number=$1
+
     if ! [[ "$pr_number" =~ ^[0-9]+$ ]] || [ "$pr_number" -lt 1 ]; then
         log_error "PR number must be a positive integer"
         exit 1
     fi
+}
 
-    # Validate max_reports is a positive integer
+validate_max_reports() {
+    local max_reports=$1
+
     if ! [[ "$max_reports" =~ ^[0-9]+$ ]] || [ "$max_reports" -lt 1 ]; then
         log_error "max_reports must be a positive integer"
         exit 1
     fi
+}
 
-    # Validate source coverage directory exists
+validate_source_coverage_dir() {
     if [[ ! -d "$SOURCE_COV_DIR" ]]; then
         log_error "Source coverage directory not found: ${SOURCE_COV_DIR}"
         exit 1
     fi
+}
 
-    # Validate GitHub token format (basic check)
+validate_github_token() {
+    local github_token=$1
+
     if [[ ${#github_token} -lt 30 ]]; then
         log_warning "GitHub token appears to be too short"
     fi
