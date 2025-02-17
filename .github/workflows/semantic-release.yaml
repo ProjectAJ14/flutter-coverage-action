@@ -1,42 +1,42 @@
-name: 🎁 Version Party Time!
+name: 🎯 Semantic Release
 
 on:
-  workflow_dispatch:  # 🎯 Manual trigger for maximum control!
+  workflow_dispatch:  # 🔄 Manual workflow trigger
 
 jobs:
-  release-the-kraken:  # 🐙 Time to unleash a new version!
-    name: 🚀 Release Magic
+  create_release:    # 📦 Create and publish release
+    name: 🚀 Generate Release
     runs-on: ubuntu-latest
     permissions:
-      contents: write      # ✍️ Let us write new stuff
-      issues: write        # 🎫 Update those tickets
-      pull-requests: write # 🔄 PR powers activated!
+      contents: write        # 📝 Repository content modification
+      issues: write         # 🎫 Issue management
+      pull-requests: write  # 🔀 Pull request management
 
     steps:
-      - name: 📦 Grab the Code
+      - name: 📥 Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # 🌳 Need the full history!
-          persist-credentials: false
+          fetch-depth: 0     # 📚 Full git history for versioning
+          persist-credentials: false  # 🔒 Security best practice
 
-      - name: 🛠️ Setup Node.js Magic
+      - name: ⚙️ Setup Node.js Environment
         uses: actions/setup-node@v4.2.0
 
-      - name: 🎭 Prep for Preview Release
+      - name: 🔧 Configure Prerelease
         if: github.ref != 'refs/heads/main'
         run: mv .releaserc.prerelease.yaml .releaserc.yaml
-        # 🎪 Special config for non-main branches!
+        # 📋 Apply prerelease configuration for non-main branches
 
-      - name: 🎈 Release Time!
+      - name: 🏷️ Generate Semantic Release
         uses: cycjimmy/semantic-release-action@v4.1.1
-        id: semantic  # 🏷️ We'll need this ID later
+        id: semantic   # 🔍 Reference for output steps
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 🔑 Authentication
 
-      - name: 🎉 Celebrate New Release
+      - name: 📊 Display Release Information
         if: steps.semantic.outputs.new_release_published == 'true'
         run: |
-          echo "🌟 New Version: ${{ steps.semantic.outputs.new_release_version }}"
-          echo "📢 Major: ${{ steps.semantic.outputs.new_release_major_version }}"
-          echo "✨ Minor: ${{ steps.semantic.outputs.new_release_minor_version }}"
-          echo "🔧 Patch: ${{ steps.semantic.outputs.new_release_patch_version }}"
+          echo "📌 Release Version: ${{ steps.semantic.outputs.new_release_version }}"
+          echo "⬆️ Major Version: ${{ steps.semantic.outputs.new_release_major_version }}"
+          echo "➕ Minor Version: ${{ steps.semantic.outputs.new_release_minor_version }}"
+          echo "🔨 Patch Version: ${{ steps.semantic.outputs.new_release_patch_version }}"

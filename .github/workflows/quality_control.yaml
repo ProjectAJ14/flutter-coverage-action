@@ -1,39 +1,40 @@
-name: 🧪 Quality Control
+name: 🧪 Code Quality Assurance
 
 on:
-  pull_request:      # 🤝 PR checks
+  pull_request:          # 🎯 Trigger on pull requests
     branches:
-      - main         # 🎯 Target branch
+      - main            # 🔱 Main branch protection
 
 jobs:
-  shell_detective:   # 🔍 Shell script inspection time!
+  validate_shell:       # 🔍 Shell script validation
     runs-on: ubuntu-latest
     steps:
-      - name: 📥 Fetch the Code
+      - name: 📥 Checkout Repository
         uses: actions/checkout@v4
 
-      - name: 🕵️ Shell Script Investigation
+      - name: 🛡️ Run ShellCheck Analysis
         uses: ludeeus/action-shellcheck@master
-        # 🧐 Making sure our shell scripts are squeaky clean!
+        # 🔬 Validates shell scripts against coding standards
 
-  quality_control:  # 🎮 Testing our action
+  flutter_coverage:     # 📊 Flutter coverage analysis
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pull-requests: write
-      pages: write
+      contents: write    # 📝 Allow content modifications
+      pull-requests: write  # 💬 Enable PR comments
+      pages: write      # 📃 GitHub Pages deployment
     steps:
-      - name: 📦 Clone the Goodies
+      - name: 📦 Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 📚 Full history for accurate coverage
 
-      - name: 📊 Reports Coverage to Github Pages
-        id: flutter-coverage-action
+      - name: 📈 Generate Coverage Report
+        id: flutter-coverage
         uses: ./
         with:
-          coverage_base_dir: 'example'
-          max_reports: '100'
-          debug_mode: '1'
-          comment_on_pr: 'true'
+          coverage_base_dir: 'example'    # 📁 Coverage source directory
+          max_reports: '100'              # 📊 Maximum reports to retain
+          debug_mode: '1'                 # 🐛 Enable debugging
+          comment_on_pr: 'true'           # 💭 Post coverage comments
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 🔑 Authentication token

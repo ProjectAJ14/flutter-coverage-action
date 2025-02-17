@@ -1,17 +1,17 @@
-name: 🔍 Commit Message Style Police
-on: [pull_request]
+name: 🔍 Commit Message Linter
+on: [ pull_request ]
 
 permissions:
-  contents: read       # 📚 Need to read the repo
-  pull-requests: read  # 👀 Gotta check those PRs
+  contents: read        # 📖 Required for repository access
+  pull-requests: read   # 👁️ Required for PR inspection
 
 jobs:
-  message_detective:   # 🕵️ Time to investigate those commits!
+  lint_commit_messages: # 🕵️ Enforce commit message conventions
     runs-on: ubuntu-latest
     steps:
-      - name: 🚀 Beam down the code
+      - name: 🛸 Checkout Repository
         uses: actions/checkout@v4
 
-      - name: ✨ Check if commits are fabulous
+      - name: 🎯 Validate Commit Messages
         uses: wagoid/commitlint-github-action@v6
-        # 🎭 Making sure your commits tell a beautiful story!
+        # 📝 Ensures commit messages follow conventional commit standards
